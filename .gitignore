@@ -1,0 +1,9 @@
+# Variables de entorno
+.env
+
+# Codigo autogenerado por sqlc (ignora todo excepto los tests)
+db/sqlc/*
+!db/sqlc/*_test.go
+
+# Temporales
+tmp/

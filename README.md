@@ -33,17 +33,7 @@ El código Go autogenerado por `sqlc` a partir de estas consultas se aloja en el
 
 ## Cómo ejecutar los tests
 
-Para probar la capa de persistencia, se debe clonar el repositorio, posicionarse en la rama `tp2` y ejecutar el script automatizado mediante `Make`.
+Para probar la capa de persistencia, se debe clonar el repositorio, posicionarse en la rama `tp2` y ejecutar:
 
-**Comando de ejecución:**
-
+```bash
 make test
-
-
-Este comando realiza automáticamente todo el flujo de trabajo:
-
-Tareas Previas: Genera el código con sqlc, compila el proyecto, limpia el entorno Docker y levanta un contenedor de pruebas efímero con PostgreSQL (inyectando el esquema de la tabla).
-
-Ejecución de Tests: Ejecuta las pruebas unitarias (paquete testing) sobre el código generado, validando la inserción y lectura en la base de datos.
-
-Tareas Posteriores: Destruye los contenedores, volúmenes y redes creadas para dejar el entorno limpio.
