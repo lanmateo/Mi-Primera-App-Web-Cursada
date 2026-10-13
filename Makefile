@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: test test-api
 
 test:
 	@echo "--- 1) TAREAS PREVIAS ---"
@@ -26,3 +26,6 @@ test:
 	@echo "\n--- 3) TAREAS POSTERIORES ---"
 	@echo "Borrando contenedores y volúmenes..."
 	docker compose down -v
+
+test-api:
+	@bash test-api.sh
