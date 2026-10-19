@@ -1,7 +1,7 @@
 # TP3: Exponiendo la Lógica como API - Catálogo de Películas
 
 ## Descripción del Proyecto
-Este proyecto implementa una API REST construida en Go para gestionar un catálogo de películas, conectando la lógica de la aplicación con una capa de persistencia en PostgreSQL gestionada mediante `sqlc`.
+Este proyecto implementa una API REST construida en Go para gestionar un catálogo de películas, conectando la lógica de la aplicación y sus handlers HTTP con una capa de persistencia en PostgreSQL gestionada mediante `sqlc`.
 
 ## Endpoints de la API
 
@@ -25,18 +25,57 @@ Este proyecto implementa una API REST construida en Go para gestionar un catálo
   "puntaje": 8.8
 }
 ```
-## Cómo ejecutar las pruebas de la API
-Para probar la API de forma automatizada, clonar el repositorio, ubicarse en la rama tp3 y ejecutar:
-make test-api
 
-(Alternativamente, puede ejecutarse directamente el script ./test-api.sh).
+---
+
+## Documentación de Arquitectura y Persistencia
+
+### Capa de Presentación / API REST
+- `main.go`: Establece la conexión con PostgreSQL mediante variables de entorno, instancia el repositorio generado por `sqlc` (`db.New`) e inicia el servidor HTTP en el puerto `8080`.
+- `handlers/peliculas.go`: Implementa los handlers CRUD (`Create`, `List`, `Get`, `Update`, `Delete`), la validación de datos de entrada (título no vacío e IDs numéricos válidos) y la serialización de respuestas en formato JSON.
+
+### Capa de Persistencia (`sqlc` + PostgreSQL)
+Para la capa de acceso a datos se utiliza **PostgreSQL** junto con **sqlc**, compilando funciones de Go fuertemente tipadas a partir de consultas SQL puras y previniendo inyecciones SQL de forma nativa.
+
+#### Estructura de la Base de Datos (`db/schema/schema.sql`)
+- `id` (`SERIAL`, Primary Key)
+- `titulo` (`VARCHAR(255)`)
+- `descripcion` (`TEXT`)
+- `duracion` (`INT`)
+- `actores` (`VARCHAR(255)`)
+- `genero` (`VARCHAR(100)`)
+- `anio_lanzamiento` (`INT`)
+- `puntaje` (`FLOAT`)
+
+#### Operaciones CRUD (`db/queries/queries.sql`)
+- `CreatePelicula`: Inserta un nuevo registro y retorna la entidad creada.
+- `GetPelicula`: Obtiene una película por su ID.
+- `ListPeliculas`: Lista todas las películas ordenadas por título.
+- `UpdatePelicula`: Actualiza los datos de un registro existente.
+- `DeletePelicula`: Elimina una película por su ID.
+
+---
+
+## Cómo ejecutar las pruebas de la API
+
+Para probar la API de forma automatizada, clonar el repositorio, ubicarse en la rama `tp3` y ejecutar:
+
+```bash
+make test-api
+```
+
+*(Alternativamente, puede ejecutarse directamente el script `./test-api.sh`).*
 
 Este comando realiza de manera autónoma el ciclo completo:
+1. **Tareas Previas:** Genera el archivo `.env` a partir de `env.example` (si no existe), genera el código Go con `sqlc`, compila el binario del servidor, limpia contenedores previos, levanta PostgreSQL en Docker con `docker compose`, espera a que esté saludable e inicia el servidor web de la API.
+2. **Prueba de Endpoints:** Ejecuta la batería de pruebas sobre cada endpoint validando los códigos de respuesta (`201`, `200`, `204`, `400`, `404`).
+3. **Tareas Posteriores:** Detiene el servidor web de la aplicación y destruye los contenedores y volúmenes creados con `docker compose down -v`.
 
-1. Tareas Previas: Genera el archivo .env a partir de env.example (si no existe), genera el código Go con sqlc, compila el binario del servidor, limpia contenedores previos, levanta PostgreSQL en Docker con docker compose, espera a que esté saludable e inicia el servidor web de la API.
+Las peticiones de prueba individuales también se encuentran documentadas en los archivos `requests.sh` (cURL) y `requests.hurl` (HURL).
 
-2. Prueba de Endpoints: Ejecuta la batería de pruebas sobre cada endpoint validando los códigos de respuesta (201, 200, 204, 400, 404).
+### Ejecución de tests unitarios de persistencia
+Para ejecutar las pruebas unitarias de la capa de base de datos con el paquete `testing`:
 
-3. Tareas Posteriores: Detiene el servidor web de la aplicación y destruye los contenedores y volúmenes creados con docker compose down -v.
-
-Las peticiones de prueba individuales también se encuentran documentadas en los archivos requests.sh (cURL) y requests.hurl (HURL).
+```bash
+make test
+```
