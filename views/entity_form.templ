@@ -1,0 +1,44 @@
+package views
+
+// PeliculaForm renderiza el formulario para crear una nueva película.
+// Envía los datos con POST a /peliculas (patrón Post/Redirect/Get).
+templ PeliculaForm() {
+	<article>
+		<header><strong>Agregar película</strong></header>
+		<form method="POST" action="/peliculas">
+			<label>
+				Título
+				<input type="text" name="titulo" placeholder="Inception" required/>
+			</label>
+			<div class="grid">
+				<label>
+					Género
+					<input type="text" name="genero" placeholder="Ciencia Ficción" required/>
+				</label>
+				<label>
+					Año de lanzamiento
+					<input type="number" name="anio_lanzamiento" min="1888" max="2100" placeholder="2010" required/>
+				</label>
+			</div>
+			<div class="grid">
+				<label>
+					Duración (minutos)
+					<input type="number" name="duracion" min="1" placeholder="148" required/>
+				</label>
+				<label>
+					Puntaje (0 a 10)
+					<input type="number" name="puntaje" min="0" max="10" step="0.1" placeholder="8.8" required/>
+				</label>
+			</div>
+			<label>
+				Actores
+				<input type="text" name="actores" placeholder="Leonardo DiCaprio" required/>
+			</label>
+			<label>
+				Descripción
+				<textarea name="descripcion" rows="3" placeholder="Ladrones de sueños" required></textarea>
+			</label>
+			<button type="submit">Guardar película</button>
+		</form>
+	</article>
+}

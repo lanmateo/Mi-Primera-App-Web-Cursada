@@ -1,4 +1,8 @@
-.PHONY: test test-api
+.PHONY: run-app test
+
+# Ejecuta la aplicación completa (tareas previas, ejecución y tareas posteriores)
+run-app:
+	@bash run-app.sh
 
 test:
 	@echo "--- 1) TAREAS PREVIAS ---"
@@ -8,6 +12,8 @@ test:
 	fi
 	@echo "Ejecutando sqlc..."
 	sqlc generate
+	@echo "Ejecutando templ generate..."
+	go run github.com/a-h/templ/cmd/templ@$$(go list -m -f '{{.Version}}' github.com/a-h/templ) generate
 	@echo "Compilando proyecto..."
 	go build ./...
 	@echo "Borrando contenedores y volúmenes viejos..."
@@ -26,6 +32,3 @@ test:
 	@echo "\n--- 3) TAREAS POSTERIORES ---"
 	@echo "Borrando contenedores y volúmenes..."
 	docker compose down -v
-
-test-api:
-	@bash test-api.sh

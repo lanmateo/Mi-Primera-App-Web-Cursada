@@ -7,3 +7,6 @@ db/sqlc/*
 
 # Temporales
 tmp/
+
+# Codigo autogenerado por templ
+*_templ.go

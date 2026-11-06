@@ -64,14 +64,16 @@ func main() {
 	// 2. Instancia del repositorio sqlc
 	queries := db.New(conn)
 
-	// 3. Registrar Handlers CRUD
+	// 3. Registrar rutas (las vistas se renderizan en el servidor con templ)
 	peliculaHandler := handlers.NewPeliculaHandler(queries)
-	http.HandleFunc("/peliculas", peliculaHandler.HandlePeliculas)
-	http.HandleFunc("/peliculas/", peliculaHandler.HandlePeliculaByID)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /{$}", peliculaHandler.Index)
+	mux.HandleFunc("POST /peliculas", peliculaHandler.Create)
+	mux.HandleFunc("POST /peliculas/{id}/eliminar", peliculaHandler.Delete)
 
 	port := getEnv("PORT", "8080")
-	log.Printf("Servidor API escuchando en http://localhost:%s\n", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	log.Printf("Servidor web escuchando en http://localhost:%s\n", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatalf("Error al iniciar el servidor: %v", err)
 	}
 }

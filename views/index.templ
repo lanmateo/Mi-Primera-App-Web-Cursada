@@ -1,0 +1,13 @@
+package views
+
+import db "catalogo-peliculas/db/sqlc"
+
+// IndexPage es la página principal: usa el Layout y adentro
+// renderiza el título, el formulario y la lista de películas.
+templ IndexPage(titulo string, peliculas []db.Pelicula) {
+	@Layout(titulo) {
+		<h1>{ titulo }</h1>
+		@PeliculaForm()
+		@PeliculaList(peliculas)
+	}
+}

@@ -1,0 +1,53 @@
+package views
+
+import (
+	"fmt"
+
+	db "catalogo-peliculas/db/sqlc"
+)
+
+// PeliculaList recibe las películas (struct generada por sqlc) y las muestra en una tabla.
+// Cada fila tiene un botón "Eliminar" que es un formulario POST (sin JavaScript).
+templ PeliculaList(peliculas []db.Pelicula) {
+	<section>
+		<h2>Películas</h2>
+		if len(peliculas) == 0 {
+			<p>Todavía no hay películas cargadas. Agregá la primera con el formulario.</p>
+		} else {
+			<div class="overflow-auto">
+				<table class="striped">
+					<thead>
+						<tr>
+							<th>Título</th>
+							<th>Género</th>
+							<th>Año</th>
+							<th>Duración</th>
+							<th>Actores</th>
+							<th>Puntaje</th>
+							<th>Descripción</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, p := range peliculas {
+							<tr>
+								<td><strong>{ p.Titulo }</strong></td>
+								<td>{ p.Genero }</td>
+								<td>{ fmt.Sprint(p.AnioLanzamiento) }</td>
+								<td>{ fmt.Sprintf("%d min", p.Duracion) }</td>
+								<td>{ p.Actores }</td>
+								<td>{ fmt.Sprintf("%.1f", p.Puntaje) }</td>
+								<td>{ p.Descripcion }</td>
+								<td>
+									<form method="POST" action={ templ.URL(fmt.Sprintf("/peliculas/%d/eliminar", p.ID)) } style="margin: 0;">
+										<button type="submit" class="secondary outline" style="margin: 0; width: auto;">Eliminar</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</section>
+}
