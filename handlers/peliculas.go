@@ -55,6 +55,11 @@ func (h *PeliculaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    if duracion < 1 || duracion > 999 {
+        http.Error(w, "La duración debe estar entre 1 y 999 minutos", http.StatusBadRequest)
+        return
+    }
+
 	anio, err := strconv.ParseInt(r.FormValue("anio_lanzamiento"), 10, 32)
 	if err != nil {
 		http.Error(w, "El año de lanzamiento debe ser un número entero", http.StatusBadRequest)
